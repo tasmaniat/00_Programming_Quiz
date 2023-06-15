@@ -20,11 +20,15 @@ def instructions():
     print(" - pick a level < easy / medium / hard >\n"
           " - choose how many questions u want\n")
 
-    print("To answer the questions correctly your goal\n "
-          "is to find out what the variable 'x' is ")
+    print(" You will be shown an equation to solve")
     print()
-    print("Example: 2x - 1 = 5   |   Example: x + 5 = 9\n"
-          "          x = 3       |            x = 4")
+    print("To answer the questions correctly your goal\n"
+          "is to find out what the variable 'x' is. ")
+    print()
+    print("Example (easy):    |  Example (medium):\n"
+          "if a=2 what is x?  |  what is 'x'   \n"
+          "   a + x = 5       |   8 * x = 56\n"
+          "       x = 3       |       x = 7 \n")
     print()
     return ""
 
