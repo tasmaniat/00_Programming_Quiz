@@ -31,7 +31,9 @@ def check_rounds():
 
 
 # Main Routine
-while True:
+end_game = "no"
+while end_game == "no":
+
     rounds_played = 0
     score = 0
 
@@ -54,10 +56,11 @@ while True:
             break
 
     print()
-    print("Quiz completed. Your score is {}/{}".format(score, rounds_played if num_questions == float(
-        'inf') else num_questions))
+    print("Quiz completed. ")
     print()
 
     play_again = input("Play again? (yes/no) ")
     if play_again.lower() != "yes" and play_again.lower() != "y":
         break
+
+
