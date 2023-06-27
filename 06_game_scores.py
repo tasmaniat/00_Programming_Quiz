@@ -1,6 +1,3 @@
-# Math Quiz Component - scoring system
-
-# Rounds won will be calculated (total - incorrect - skipped)
 rounds_played = 0
 rounds_incorrect = 0
 rounds_skipped = 0
@@ -8,12 +5,10 @@ rounds_skipped = 0
 # Results for testing purposes
 test_results = [True, False, False, True, True]
 
-# Play game
 for item in test_results:
     rounds_played += 1
 
-    # Check answer
-
+    # Checks answer user inputs
     result = item
 
     if result:
@@ -29,8 +24,9 @@ rounds_won = rounds_played - rounds_incorrect - rounds_skipped
 
 # End of game statements
 print()
-print('***** End Game Summary *****')
+print('--------------- End Game Summary ---------------')
 print("Correct: {} \t|\t Incorrect: {} \t|\t Skipped: "
       "{}".format(rounds_won, rounds_incorrect, rounds_skipped))
+print('------------------------------------------------')
 print()
 print("Thanks for playing")
