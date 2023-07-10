@@ -2,7 +2,7 @@
 
 
 # Functions go here
-def level_choice(question, valid_list, error):
+def choice_checker(question, valid_list, error):
     valid = False
     while not valid:
 
@@ -30,14 +30,13 @@ emh_level = ["easy", "medium", "hard", "xxx"]
 # Loop for testing purposes
 user_choice = ""
 while user_choice != "xxx":
-
     # Ask user for choice and check it's valid
     print()
-    user_choice = level_choice("What level would you like to "
-                               "play? ", emh_level,
-                               "Please choose Easy/"
-                               "Medium/Hard "
-                               "(or xxx to quit)")
+    user_choice = choice_checker("What level would you like to "
+                                 "play? ", emh_level,
+                                 "Please choose Easy/"
+                                 "Medium/Hard "
+                                 "(or xxx to quit)")
 
     # print out choice for comparison purposes
     print("You chose {} Level".format(user_choice))

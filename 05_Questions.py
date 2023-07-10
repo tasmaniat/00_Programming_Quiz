@@ -2,63 +2,102 @@ import random
 
 rounds = 0
 rounds_played = 0
-easy_level = 0
-medium_level = 0
-hard_level = 0
+game_summary = []
 
 
-def choice_checker(question, valid_list, error):
-    valid = False
-    while not valid:
+# checks user enters an integer between a low and high number
+def int_check(question, low=None, high=None, exit_code=None):
+    if low is None and high is None:
+        error = "Please enter an integer"
+        situation = "any integer"
+    elif low is not None and high is not None:
+        error = f"Please enter an integer between {low} and {high}"
+        situation = "both"
+    else:
+        error = f"Please enter an integer more than {low}"
+        situation = "low only"
 
-        # ask user for choice (and put choice in lowercase)
+    while True:
         response = input(question).lower()
+        if response == exit_code:
+            return response
 
-        # iterates through list and if response == item
-        # in the list (or the first letter of an item), the
-        # full item name is returned
+        try:
+            response = int(response)
 
-        for var_item in valid_list:
-            if response == var_item[0] or response == var_item:
-                return var_item
+            if situation == "any integer":
+                return response
+            elif situation == "both":
+                if low <= response <= high:
+                    return response
+            elif situation == "low only":
+                if response >= low:
+                    return response
 
-        # output error if the item not in list
-        print(error)
-        print()
+            print(error)
+
+        except ValueError:
+            print(error)
 
 
-# List for checking responses
+# acceptable list of words.
 emh_level = ["easy", "medium", "hard"]
-game_summary = 0
 
 end_game = "no"
 while end_game == "no":
-
-    # Start of Game Play Loop
     print()
-    user_choice = choice_checker("What level would you like to play? ",
-                                 emh_level,
-                                 "Please choose Easy / Medium / Hard "
-                                 "(or xxx to quit)")
-    # Rounds Heading
-    print()
-    if rounds == "":
-        heading = "Continuous Mode: " \
-                  "Round {}".format(rounds_played + 1)
-    else:
-        heading = "Round {} of" \
-                  " {} ".format(rounds_played + 1, rounds)
 
-    choose_error = "Please choose from easy /" \
-                   "medium / hard (or xxx to quit)"
+    choose_instruction = "What level do you want to play? "
+    choose_error = "Please choose from easy/medium/hard (or xxx to quit)."
+
+    difficulty = input(choose_instruction).lower()
 
     # end of game if exit code is typed
-    if user_choice == "xxx":
+    if difficulty == "xxx":
         break
 
-    # compare choices
-    if easy_level == user_choice:
-        x = random.randint(1, 10)
-        coefficient = random.randint(1, 5)
-        result = coefficient * x
-        question = f"Find what x is: {coefficient}x = {result}"
+    while difficulty not in emh_level and difficulty != "xxx":
+        print(choose_error)
+        difficulty = input(choose_instruction).lower()
+
+    # generated algebra questions for each level
+    def play_round(difficulty):
+        if difficulty == "easy" or difficulty == "e":
+            x = random.randint(1, 12)
+            result = 4 * x
+            question = f"What is x: 4x = {result}"
+
+        elif difficulty == "medium" or difficulty == "m":
+            x = random.randint(1, 10)
+            num_one = random.randint(1, 12)
+            result = num_one * x
+            question = f"Find what x is: {num_one} * x = {result}"
+        else:
+            x = random.randint(1, 20)
+            num_two = random.randint(1, 10)
+            num_three = random.randint(1, 20)
+            result = num_two * x + num_three
+            question = f"Find what x is: {num_two}x + {num_three} = {result}"
+
+        print(question)
+
+        # checks if answer is correct
+        user_answer = input("Your answer: ")
+        if user_answer == str(x):
+            print("Correct!")
+            print()
+            return True
+        else:
+            print(f"Wrong! The correct answer is {x}.")
+            print()
+            return True
+
+
+    while True:
+        success = play_round(difficulty)
+        if not success:
+            break
+
+    play_again = input("Play again? (yes/no) ")
+    if play_again.lower() != "yes" and play_again.lower() != "y":
+        break

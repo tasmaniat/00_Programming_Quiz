@@ -21,10 +21,10 @@ def choice_checker(question, valid_list, error):
 
 
 # Checks if the user enters an integer that is more than zero
+# asks how many questions a user wants to play with
 # or allows <enter> for infinite mode
 def check_rounds():
     while True:
-        print()
         user_input = input("How many questions? ")
         print()
 
@@ -72,17 +72,16 @@ def yes_no(question):
 # Prints the quiz's instructions, returns ""
 def instructions():
     print()
-    print("------- WELCOME TO THE ALGEBRA QUIZ -------")
+    print("--------- WELCOME TO THE ALGEBRA QUIZ ---------")
     print()
-    print(" - Pick a level <easy / medium / hard>\n"
-          " - Choose how many questions you want\n")
-    print("You will be shown an equation to solve")
+    print("  - Pick a level <easy / medium / hard>\n"
+          "  - Choose how many questions you want\n")
+    print("< answer the question or press 'xxx' to quit > ")
     print()
-    print("To answer the questions correctly, your goal\n"
-          "is to find out what the variable 'x' is. ")
+    print("your goal is to find what the variable 'x' is. ")
     print()
-    print("Example: 2x - 1 = 5   |   Example: x + 5 = 9\n"
-          "          x = 3       |            x = 4")
+    print("Example: 2x + 1 = 19  |   Example: 5 * x = 20\n"
+          "          x = 8       |            x = 4")
     print()
     return ""
 
@@ -91,7 +90,7 @@ def instructions():
 best_score = float('inf')
 worst_score = float('-inf')
 total_score = 0
-
+total_questions = 0
 
 # Ask the user if they have played before
 # Display instructions if they have not
@@ -100,42 +99,45 @@ played_before = yes_no("Have you played this quiz before? ")
 
 if played_before == "no":
     instructions()
+    print()
     input("Press enter to continue")
-
-game_summary = []
 
 # List for checking responses
 emh_level = ["easy", "medium", "hard", "xxx"]
 
-# Ask user for choice and check if it's valid
-print()
-user_choice = choice_checker("What level would you "
-                             "like to play? ", emh_level, "Please choose "
-                                                          "Easy / Medium / Hard ("
-                                                          "or xxx to quit)")
+end_game = False
+while not end_game:
+    # Ask user for choice and check if it's valid
+    user_choice = choice_checker("Chose a level: ", emh_level, "Please choose "
+                                                               "Easy / Medium / Hard ("
+                                                               "or xxx to quit)")
+    # Check if the user wants to quit the quiz
+    if user_choice == "xxx":
+        print()
+        end_game = True
+        break
 
-# Check if the user wants to quit the quiz
-if user_choice == "xxx":
-    print()
-    print("Quiz ended. Thank you for playing!")
-    exit()
-
-# Prints out choice of level
-print("You chose {} Level".format(user_choice))
-
-
-end_game = "no"
-while end_game == "no":
+    unanswered_questions = 0
     rounds_played = 0
     rounds_correct = 0
     rounds_incorrect = 0
+    rounds_skipped = 0
     score = 0
 
+    # enter for continuous mode
+    print()
+    print("<enter> for continuous mode ")
     num_questions = check_rounds()
 
+    if num_questions == "xxx" and rounds_played < total_questions:
+        rounds_incorrect -= rounds_played - rounds_correct
+
+    game_summary = []
+
+    # prints out question heading for each question
     while rounds_played < num_questions:
         rounds_played += 1
-        print("Question: {}".format(rounds_played))
+        print("----- Question: {} -----".format(rounds_played))
 
 
         def play_round(difficulty):
@@ -166,10 +168,10 @@ while end_game == "no":
 
                 if user_answer.lower() == "xxx":
                     print()
-                    print("Quiz ended. Thank you for playing!")
-                    exit()
+                    return "Quit", 0
 
                 try:
+                    # checks if user answer is valid
                     user_answer = int(user_answer)
                     if user_answer > 0:
                         break
@@ -179,26 +181,32 @@ while end_game == "no":
                     print()
                     print("Please enter an integer.(or xxx to quit)")
 
-            # checks if hte user's answer is correct
+            # checks if the user's answer is correct
             if user_answer == x:
                 print("Correct!")
                 print()
-                return "Correct  ", 1
+                return "Correct ", 1
             else:
                 print(f"Wrong! The correct answer is {x}.")
                 print()
                 return "Incorrect", 0
 
 
-        success = play_round(user_choice)
-        result, question_score = success
+        success, question_score = play_round(user_choice)
+
+        if success == "Quit":
+            rounds_skipped += 1
+            unanswered_questions = num_questions - rounds_played + 1
+            break
+
+        result = "Correct " if success == "Correct " else "Incorrect"
         game_summary.append((rounds_played, result, question_score))
         score += question_score
 
+    total_questions += rounds_played
     total_score += score
     rounds_correct += score
-    rounds_incorrect += num_questions - score
-    result = ""
+    rounds_incorrect = rounds_played - rounds_correct - rounds_skipped
 
     if score < best_score:
         best_score = score
@@ -207,19 +215,22 @@ while end_game == "no":
         worst_score = score
 
     print()
-    print("Quiz completed.")
-    print()
+    print("*** Quiz completed! ***")
 
-    # ***** Calculate quiz statistics *****
-    average_score = total_score / rounds_played if rounds_played != 0 else 0
-    percent_correct = rounds_correct / (rounds_correct + rounds_incorrect) * 100
-    percent_incorrect = rounds_incorrect / (rounds_correct + rounds_incorrect) * 100
+    # ***** Calculate game statistics *****
+    average_score = total_score / total_questions if total_questions != 0 else 0
+    percent_correct = rounds_correct / num_questions * 100 if num_questions != 0 else 0
+    percent_incorrect = rounds_incorrect / num_questions * 100 if num_questions > 0 else 0
+
+    # Adjust score statements for unanswered questions
+    if num_questions == float('inf') and rounds_played < total_questions:
+        unanswered_questions = total_questions - rounds_played
+        rounds_incorrect -= unanswered_questions
 
     # End of quiz statements
-
-    print("----------------------------")
-    print("Correct: {}\t|\tIncorrect: {} ".format(rounds_correct, rounds_incorrect))
-    print("----------------------------")
+    print("-----------------------------")
+    print("Correct: {}\t|\tIncorrect: {} ".format(rounds_correct, max(0, rounds_incorrect)))
+    print("-----------------------------")
     print()
 
     # Ask the user if they want to see the game statistics
@@ -236,37 +247,19 @@ while end_game == "no":
         for i, item in enumerate(game_summary, 1):
             question_number, result, question_score = item
             print(" {}\t\t  | {}\t| {}".format(question_number, result, question_score))
+        if unanswered_questions > 0:
+            print(" {}\t\t  | Exited\t\t| 0".format(rounds_played))
 
         # Show game statistics
         # Displays the best, worst, and average scores of the game
         print("\n******* Summary Statistics *******")
-        print("Best Score: {}\nWorst Score: {}\nAverage Score: {:.2f}"
+        print("Best Score: {}\nWorst Score: {}\nAverage Score: {:.2f} %"
               .format(best_score, worst_score, average_score))
         print()
 
     play_again = input("Play again? (yes/no) ")
+    print()
     if play_again.lower() == "no" or play_again.lower() == "n":
-        end_game = "yes"
-        print()
-        print("Thank you for playing!")
-    else:
-        # List for checking responses
-        emh_level = ["easy", "medium", "hard", "xxx"]
+        end_game = True
 
-        # Ask user for choice and check if it's valid
-        print()
-        user_choice = choice_checker("What level would you "
-                                     "like to play? ", emh_level, "Please choose "
-                                                                  "Easy / Medium / Hard ("
-                                                                  "or xxx to quit)")
-
-        # Check if the user wants to quit the quiz
-        if user_choice == "xxx":
-            print()
-            print("Quiz ended. Thank you for playing!")
-            exit()
-
-        # Prints out choice of level
-        print("You chose {} Level".format(user_choice))
-
-        game_summary = []
+print("Thank you for playing!")

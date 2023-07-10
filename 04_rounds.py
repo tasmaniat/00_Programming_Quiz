@@ -59,6 +59,7 @@ while end_game == "no":
     print("Quiz completed. ")
     print()
 
+    # ask to play again
     play_again = input("Play again? (yes/no) ")
     if play_again.lower() != "yes" and play_again.lower() != "y":
         break

@@ -82,6 +82,7 @@ while end_game == "no":
             break
 
 
+        # Generates an equation based on the chosen level
         def play_round(difficulty):
             if difficulty == "easy" or difficulty == "e":
                 x = random.randint(1, 12)
@@ -101,6 +102,8 @@ while end_game == "no":
                 question = f"Find what x is: {num_two}x + {num_three} = {result}"
 
             print(question)
+
+            # Asks user for answer and to validate it.
             while True:
                 response = input("Your answer: ")
                 if response.isdigit():
@@ -110,9 +113,11 @@ while end_game == "no":
                     print("Quiz ended. Thank you for playing")
                     exit()
                 else:
+                    # checks if user answer is valid
                     print("Please enter a valid integer.")
                     print()
 
+            # checks if user answer is correct
             if user_answer == x:
                 print("Correct!")
                 print()
@@ -137,6 +142,7 @@ while end_game == "no":
     print("----------")
     print()
 
+    # ask to play again.
     play_again = input("Play again? (yes/no) ")
     if play_again.lower() != "yes" and play_again.lower() != "y":
         print()
